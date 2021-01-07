@@ -38,13 +38,16 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  signIn(String email, pass) async {
+  signIn(String email, pass,remember) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     print("sign in TBS");
+    //print(_checkboxListTile);
+   // print(remember);
     Map data = {
       'email': email,
       'password': pass,
-      'url': 'https://shop.arcanetechs.com/api/publisher/auth/login'
+      'url': 'https://shop.arcanetechs.com/api/publisher/auth/login',
+      'remember':remember
     };
     var jsonResponse = null;
     var response = await http.post("https://shop.arcanetechs.com/api/publisher/auth/login", body: data);
@@ -58,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
         sharedPreferences.setString("token", jsonResponse['data']['token']);
 
         token = sharedPreferences.getString("token");
+        //print(token);
         Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => HomePage()));
       }
     }
@@ -80,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _isLoading = true;
           });
-          signIn(emailController.text, passwordController.text);
+          signIn(emailController.text, passwordController.text,remember);
         },
         elevation: 0.0,
         color: Colors.purple,
@@ -92,6 +96,9 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
+  bool _checkboxListTile =false;
+  String remember='0';
+
 
   Container textSection() {
     return Container(
@@ -123,7 +130,26 @@ class _LoginPageState extends State<LoginPage> {
               hintStyle: TextStyle(color: Colors.white70),
             ),
           ),
-        ],
+         CheckboxListTile(
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text('Remember me'),
+            checkColor: Colors.white,
+            value: _checkboxListTile,
+            onChanged: (value) {
+              setState(() {
+                _checkboxListTile = !_checkboxListTile;
+                if(_checkboxListTile == false)
+                  {
+                    remember='0';
+                  }
+                else
+                  {
+                    remember='1';
+                  }
+              });
+            },
+          )
+           ],
       ),
     );
   }

@@ -9,6 +9,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String token='';
 
   SharedPreferences sharedPreferences;
   void initState(){
@@ -32,6 +33,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               sharedPreferences.clear();
               sharedPreferences.commit();
+              token = sharedPreferences.getString("token");
+              print(token);
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => LoginPage()), (Route<dynamic> route) => false);
             },
             child: Text("Log Out", style: TextStyle(color: Colors.white)),
