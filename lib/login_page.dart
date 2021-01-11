@@ -5,6 +5,7 @@ import 'package:log_app/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:log_app/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -61,8 +62,15 @@ class _LoginPageState extends State<LoginPage> {
         sharedPreferences.setString("token", jsonResponse['data']['token']);
 
         token = sharedPreferences.getString("token");
-        //print(token);
-        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+        print(token);
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+        print(decodedToken["name"]);
+        bool isTokenExpired = JwtDecoder.isExpired(token);
+        if (!isTokenExpired) {
+          print('authenticate');
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+        }
       }
     }
     else {
